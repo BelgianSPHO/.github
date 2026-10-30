@@ -1,0 +1,71 @@
+name: "Clinical Safety & Protocol Accuracy Review"
+description: "Flag a clinical protocol discrepancy, dosing calculation edge case, guideline update, or AI hallucination risk."
+title: "[Clinical Safety]: "
+labels:
+  - "clinical-safety"
+  - "priority-review"
+body:
+  - type: "markdown"
+    attributes:
+      value: |
+        > **🩺 CLINICAL SAFETY & PROTOCOL ACCURACY ESCALATION**
+        > Use this form when a pediatric oncologist, clinical pharmacist, oncology nurse, trial coordinator, or engineer identifies a discrepancy between software behavior and authoritative clinical guidelines, dosing rules, or Belgian regulatory requirements.
+        > *Reminder: Use only synthetic patient scenarios—never include real patient identifiers.*
+  - type: "dropdown"
+    id: "use_case"
+    attributes:
+      label: "Bedside Clinical Mission (Use Case)"
+      description: "Which BSPHO clinical track requires clinical safety review?"
+      options:
+        - "UC1 - OncoProtocol (Red Zone — Protocol Search & Conflict Detection)"
+        - "UC2 - PediDose (Green Zone — Pediatric Chemotherapy Dosing & Prescriber)"
+        - "UC3 - AImesis (Black Zone — CINV Management Guidelines)"
+        - "UC4 - AutoICF (Blue Zone — Belgian Pediatric Clinical Trial ICF)"
+        - "Organization / General (.github / Shared Infrastructure)"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "risk_category"
+    attributes:
+      label: "Clinical Safety Risk Category"
+      description: "Select the primary clinical or regulatory risk category."
+      options:
+        - "Dosing / BSA / Toxicity Calculation Discrepancy (UC2)"
+        - "Protocol Version / Amendment / Eligibility Conflict (UC1)"
+        - "Antiemetic / CINV Guideline or Formulary Mismatch (UC3)"
+        - "Belgian Legal / Regulatory / Age-Appropriate Assent Non-Compliance (UC4)"
+        - "LLM Hallucination / Missing Citation / Prompt Injection Vulnerability"
+        - "Missing 'Advisory Only — Requires Clinician Sign-Off' Guardrail"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "clinical_finding"
+    attributes:
+      label: "Detailed Clinical Finding or Safety Risk"
+      description: "Describe the exact clinical inaccuracy, calculation edge case, or hallucination risk observed."
+      placeholder: "Example: For infants < 10 kg on Vincristine, the weight-based dose cap rule (mg/kg vs mg/m²) was not triggered..."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "reference_source"
+    attributes:
+      label: "Authoritative Clinical or Regulatory Reference"
+      description: "Cite the authoritative source document, version, section, and page number."
+      placeholder: "Example: ALLTogether1 Master Protocol v4.0, Section 7.3.2 (p. 84) / UZA Pediatric CINV Guideline v2 / Belgian Law of 7 May 2004 Art. 29 / FAMHP ICF Template"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "recommended_remediation"
+    attributes:
+      label: "Recommended Remediation & Guardrail Rule"
+      description: "Specify the exact deterministic rule, citation requirement, or clinical warning that must be enforced."
+      placeholder: "Example: Enforce deterministic hard cap of 2.0 mg maximum single Vincristine dose with mandatory pharmacist verification alert."
+    validations:
+      required: true
+  - type: "checkboxes"
+    id: "safety_attestation"
+    attributes:
+      label: "Mandatory Privacy Attestation"
+      options:
+        - label: "I confirm this clinical review contains ZERO real patient data (PHI/PII), hospital MRNs, or national register numbers."
+          required: true

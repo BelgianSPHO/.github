@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "🏥 BSPHO Secretariat & Team Access Support"
+    url: "https://github.com/BelgianSPHO/.github/blob/main/SUPPORT.md"
+    about: "Need repository access for your hackathon table/team or have organization questions? See SUPPORT.md or email secretary@bspho.be."
+  - name: "🔒 Security, Credentials & Accidental PHI/PII Incident Reporting"
+    url: "https://github.com/BelgianSPHO/.github/blob/main/SECURITY.md"
+    about: "DO NOT post real patient data or leaked keys in public issues. Follow the emergency procedure in SECURITY.md."

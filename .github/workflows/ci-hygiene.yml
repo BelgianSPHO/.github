@@ -1,0 +1,148 @@
+name: "BSPHO Clinical & Security Hygiene Guardrails"
+
+"on":
+  push:
+    branches:
+      - "main"
+      - "master"
+  pull_request: {}
+  workflow_call: {}
+
+permissions:
+  contents: "read"
+
+jobs:
+  hygiene-and-safety-checks:
+    name: "YAML Syntax, Secret Leak & Trojan-Source Unicode Guardrails"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@v4"
+
+      - name: "Set up Python 3"
+        uses: "actions/setup-python@v5"
+        with:
+          python-version: "3.12"
+
+      - name: "Install PyYAML"
+        run: "python3 -m pip install --quiet pyyaml"
+
+      - name: "Validate YAML & CFF Syntax"
+        run: |
+          python3 - << 'EOF'
+          import pathlib
+          import sys
+          import yaml
+
+          root = pathlib.Path(".")
+          extensions = {".yml", ".yaml", ".cff"}
+          errors = []
+          checked = 0
+
+          for path in sorted(root.rglob("*")):
+              if not path.is_file() or ".git" in path.parts:
+                  continue
+              if path.suffix.lower() in extensions:
+                  checked += 1
+                  try:
+                      with path.open("r", encoding="utf-8") as f:
+                          yaml.safe_load(f)
+                  except Exception as exc:
+                      errors.append(f"{path}: {exc}")
+
+          print(f"Validated {checked} YAML/CFF file(s).")
+          if errors:
+              print("YAML/CFF syntax validation failed:", file=sys.stderr)
+              for err in errors:
+                  print(f"  - {err}", file=sys.stderr)
+              sys.exit(1)
+          EOF
+
+      - name: "Scan for Leaked Cloud Credentials & Private Keys"
+        run: |
+          python3 - << 'EOF'
+          import pathlib
+          import re
+          import subprocess
+          import sys
+
+          ignored_names = {"ci-hygiene.yml", "SECURITY.md"}
+          patterns = [
+              ("GCP Service Account Key", re.compile(r'"type"\s*:\s*"service_' + r'account"')),  # pragma: allowlist secret
+              ("PEM Private Key", re.compile(r"-----BEGIN " + r"PRIVATE KEY-----")),  # pragma: allowlist secret
+              ("RSA Private Key", re.compile(r"-----BEGIN RSA " + r"PRIVATE KEY-----")),  # pragma: allowlist secret
+              ("Google Cloud / Firebase API Key", re.compile(r"AIza" + r"Sy[0-9A-Za-z_-]{33}")),  # pragma: allowlist secret
+              ("GitHub Personal Access Token", re.compile(r"ghp" + r"_[0-9A-Za-z]{36}")),  # pragma: allowlist secret
+          ]
+
+          files_out = subprocess.check_output(["git", "ls-files"], text=True)
+          findings = []
+
+          for rel_path in files_out.splitlines():
+              path = pathlib.Path(rel_path)
+              if path.name in ignored_names or not path.is_file():
+                  continue
+              try:
+                  content = path.read_text(encoding="utf-8", errors="ignore")
+              except Exception:
+                  continue
+              for label, regex in patterns:
+                  for match in regex.finditer(content):
+                      line_no = content.count("\n", 0, match.start()) + 1
+                      findings.append(f"{rel_path}:{line_no} -> Potential {label} detected")
+
+          if findings:
+              print("CRITICAL: Potential leaked credentials or private keys detected!", file=sys.stderr)
+              for item in findings:
+                  print(f"  - {item}", file=sys.stderr)
+              sys.exit(1)
+          print("Credential and secret scan passed with zero findings.")
+          EOF
+
+      - name: "Scan for Trojan-Source Bidirectional & Hidden Prompt-Injection Unicode"
+        run: |
+          python3 - << 'EOF'
+          import pathlib
+          import subprocess
+          import sys
+
+          bidi_codepoints = {
+              0x202A, 0x202B, 0x202C, 0x202D, 0x202E,
+              0x2066, 0x2067, 0x2068, 0x2069,
+          }
+          zero_width_codepoints = {
+              0x200B, 0x200C, 0x200D,
+          }
+
+          files_out = subprocess.check_output(["git", "ls-files"], text=True)
+          findings = []
+
+          for rel_path in files_out.splitlines():
+              path = pathlib.Path(rel_path)
+              if not path.is_file():
+                  continue
+              try:
+                  raw = path.read_bytes()
+                  text = raw.decode("utf-8")
+              except UnicodeDecodeError:
+                  continue
+
+              for idx, ch in enumerate(text):
+                  cp = ord(ch)
+                  if cp in bidi_codepoints:
+                      line_no = text.count("\n", 0, idx) + 1
+                      findings.append(f"{rel_path}:{line_no} -> Trojan-Source bidirectional codepoint U+{cp:04X}")
+                  elif cp in zero_width_codepoints:
+                      line_no = text.count("\n", 0, idx) + 1
+                      findings.append(f"{rel_path}:{line_no} -> Hidden zero-width codepoint U+{cp:04X}")
+                  elif cp == 0xFEFF and idx > 0:
+                      line_no = text.count("\n", 0, idx) + 1
+                      findings.append(f"{rel_path}:{line_no} -> Mid-file zero-width no-break space (BOM) U+FEFF")
+
+          if findings:
+              print("CRITICAL: Hidden or bidirectional Unicode characters detected (Trojan-Source / Prompt Injection risk)!", file=sys.stderr)
+              for item in findings:
+                  print(f"  - {item}", file=sys.stderr)
+              sys.exit(1)
+          print("Trojan-Source and hidden Unicode scan passed with zero findings.")
+          EOF

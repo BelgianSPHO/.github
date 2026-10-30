@@ -1,0 +1,69 @@
+name: "Feature Request"
+description: "Propose a bedside workflow improvement, clinical feature, or shared platform capability for BelgianSPHO."
+title: "[Feature]: "
+labels:
+  - "enhancement"
+body:
+  - type: "markdown"
+    attributes:
+      value: |
+        > **💡 BEDSIDE-FIRST DESIGN PRINCIPLE**
+        > Every feature in `BelgianSPHO` should reduce cognitive burden for pediatric hematology-oncology teams or improve communication for patients and families, while strictly preserving **Human-in-the-Loop clinician sign-off** and **source provenance**.
+  - type: "dropdown"
+    id: "use_case"
+    attributes:
+      label: "Bedside Clinical Mission (Use Case)"
+      description: "Which BSPHO clinical track or shared component does this proposal target?"
+      options:
+        - "UC1 - OncoProtocol (Red Zone — Protocol Search & Conflict Detection)"
+        - "UC2 - PediDose (Green Zone — Pediatric Chemotherapy Dosing & Prescriber)"
+        - "UC3 - AImesis (Black Zone — CINV Management Guidelines)"
+        - "UC4 - AutoICF (Blue Zone — Belgian Pediatric Clinical Trial ICF)"
+        - "Organization / General (.github / Shared Infrastructure)"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "target_persona"
+    attributes:
+      label: "Primary Target Persona"
+      description: "Who primarily benefits from this enhancement at the bedside or in the clinic?"
+      options:
+        - "Pediatric Oncologist / Hematologist"
+        - "Oncology Nurse"
+        - "Clinical Pharmacist"
+        - "Clinical Trial Coordinator / Legal-Ethics"
+        - "Patient / Parent / Family"
+        - "Developer / Data Scientist / Platform"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "clinical_problem"
+    attributes:
+      label: "Clinical or Operational Problem Statement"
+      description: "What bedside friction point, safety bottleneck, or workflow gap does this solve?"
+      placeholder: "Describe the real-world clinical workflow challenge (without referencing any identifiable patient data)..."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "proposed_solution"
+    attributes:
+      label: "Proposed Feature or Workflow Enhancement"
+      description: "How should the tool work, what inputs should it take, and what output should it present?"
+      placeholder: "Outline the user experience, deterministic rules, or multilingual support needed (NL/FR/EN)..."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "clinical_safety_impact"
+    attributes:
+      label: "Clinical Safety, Provenance & Human-in-the-Loop Impact"
+      description: "How does this feature preserve Human-in-the-Loop clinician sign-off, provenance citations, and patient safety?"
+      placeholder: "Explain how outputs remain advisory-only, cite exact protocol/guideline pages, and avoid raw LLM arithmetic..."
+    validations:
+      required: true
+  - type: "checkboxes"
+    id: "privacy_attestation"
+    attributes:
+      label: "Mandatory Privacy Attestation"
+      options:
+        - label: "I confirm this feature request contains ZERO real patient data (PHI/PII), hospital MRNs, or cloud credentials."
+          required: true

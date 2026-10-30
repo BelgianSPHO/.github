@@ -1,0 +1,76 @@
+name: "Bug Report"
+description: "Report a software defect, UI issue, or unexpected technical behavior across BelgianSPHO bedside tools."
+title: "[Bug]: "
+labels:
+  - "bug"
+  - "triage"
+body:
+  - type: "markdown"
+    attributes:
+      value: |
+        > **⚠️ STRICT PATIENT PRIVACY & SECURITY NOTICE**
+        > Never include real patient data (PHI/PII), hospital medical record numbers (MRNs), Belgian national register numbers (*rijksregisternummer* / *NISS*), or cloud credentials/API keys in GitHub issues. Use **synthetic personas and public protocols only**. If you need to report an accidental data or credential leak, stop immediately and follow [SECURITY.md](https://github.com/BelgianSPHO/.github/blob/main/SECURITY.md).
+  - type: "dropdown"
+    id: "use_case"
+    attributes:
+      label: "Bedside Clinical Mission (Use Case)"
+      description: "Which BSPHO clinical track or repository does this bug affect?"
+      options:
+        - "UC1 - OncoProtocol (Red Zone — Protocol Search & Conflict Detection)"
+        - "UC2 - PediDose (Green Zone — Pediatric Chemotherapy Dosing & Prescriber)"
+        - "UC3 - AImesis (Black Zone — CINV Management Guidelines)"
+        - "UC4 - AutoICF (Blue Zone — Belgian Pediatric Clinical Trial ICF)"
+        - "Organization / General (.github / Shared Infrastructure)"
+    validations:
+      required: true
+  - type: "dropdown"
+    id: "severity"
+    attributes:
+      label: "Severity Level"
+      description: "Estimate the clinical safety or operational impact of this defect."
+      options:
+        - "Critical (Clinical Safety / Incorrect Dosing or Protocol Output)"
+        - "High (Core Workflow Broken)"
+        - "Medium (Degraded Functionality / UI Issue)"
+        - "Low (Minor / Cosmetic)"
+    validations:
+      required: true
+  - type: "textarea"
+    id: "description"
+    attributes:
+      label: "Bug Description"
+      description: "Provide a clear, concise description of the bug."
+      placeholder: "Describe what went wrong and which component or agent step failed..."
+    validations:
+      required: true
+  - type: "textarea"
+    id: "steps_to_reproduce"
+    attributes:
+      label: "Steps to Reproduce (Synthetic Inputs Only)"
+      description: "Exact steps, synthetic patient parameters (e.g., age, weight, height, protocol arm), or commands to trigger the issue."
+      placeholder: |
+        1. Select synthetic persona 'Emma (6yo, 21 kg, 115 cm, ALLTogether1 SR)'
+        2. Run calculation / query '...'
+        3. Observe error in output panel
+    validations:
+      required: true
+  - type: "textarea"
+    id: "expected_vs_actual"
+    attributes:
+      label: "Expected vs. Actual Behavior"
+      description: "Compare the expected clinical/technical behavior against what actually occurred."
+      placeholder: |
+        Expected: Deterministic BSA calculation returns 0.82 m² with source citation.
+        Actual: UI throws a validation error or omits the citation badge.
+    validations:
+      required: true
+  - type: "checkboxes"
+    id: "safety_attestation"
+    attributes:
+      label: "Mandatory Privacy & Security Attestation"
+      description: "Please verify both statements before submitting this issue."
+      options:
+        - label: "I confirm this issue contains ZERO real patient data (PHI/PII), hospital MRNs, or national register numbers (only synthetic/public test data)."
+          required: true
+        - label: "I confirm this issue contains ZERO cloud credentials, API keys, or secret tokens."
+          required: true

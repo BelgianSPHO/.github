@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+title: "BelgianSPHO Open-Source Pediatric Hematology & Oncology Clinical AI Ecosystem"
+message: "If you use this software, clinical benchmark schemas, or governance templates in your research or clinical engineering work, please cite it using the metadata from this file."
+type: software
+authors:
+  - name: "Belgian Society of Paediatric Haematology and Oncology (BSPHO)"
+    website: "https://bspho.be/"
+    email: "secretary@bspho.be"
+    country: BE
+repository-code: "https://github.com/BelgianSPHO/.github"
+url: "https://bspho.be/"
+abstract: "Foundational open-source governance, clinical safety standards, and community templates for the Belgian Society of Paediatric Haematology and Oncology (BSPHO) clinical AI ecosystem (Hacking4Good / Solve with Google x BSPHO 2026) spanning OncoProtocol (UC1), PediDose (UC2), AImesis (UC3), and AutoICF (UC4)."
+keywords:
+  - "pediatric oncology"
+  - "clinical decision support"
+  - "healthcare AI"
+  - "Belgium"
+  - "BSPHO"
+  - "OncoProtocol"
+  - "PediDose"
+  - "AImesis"
+  - "AutoICF"
+license: Apache-2.0
+version: "1.0.0"
+date-released: "2026-10-30"
